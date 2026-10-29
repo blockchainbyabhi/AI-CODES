@@ -1,0 +1,86 @@
+from collections import deque
+
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': []
+}
+
+def bfs(graph, start, goal):
+    visited = set()
+    queue = deque([start])
+
+    while queue:
+        node = queue.popleft()
+
+        if node not in visited:
+            print(node, end=" ")
+
+            visited.add(node)
+
+            if node == goal:
+                print("\nGoal Found!")
+                return
+
+            for neighbour in graph[node]:
+                if neighbour not in visited:
+                    queue.append(neighbour)
+
+bfs(graph, 'A', 'G')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+B)	IDFS
+Code :
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': []
+}
+
+def iterative_dfs(graph, start, goal):
+    visited = set()
+    stack = [start]
+
+    while stack:
+        node = stack.pop()
+
+        if node not in visited:
+            print(node, end=" ")
+
+            visited.add(node)
+
+            if node == goal:
+                print("\nGoal Found!")
+                return
+
+            # Reverse order to maintain left-to-right traversal
+            for neighbour in reversed(graph[node]):
+                if neighbour not in visited:
+                    stack.append(neighbour)
+
+iterative_dfs(graph, 'A', 'G')
