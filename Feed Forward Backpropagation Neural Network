@@ -1,0 +1,57 @@
+Aim: To implement a Feed Forward Backpropagation Neural Network using a given dataset, train the neural network using the backpropagation algorithm, and evaluate the performance of the trained network on test data.
+Code:
+
+import numpy as np
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# 1. Load the Iris dataset
+iris = load_iris()
+
+X = iris.data
+y = iris.target
+
+print("Dataset Shape:", X.shape)
+print("Classes:", iris.target_names)
+
+# 2. Split the dataset into training and testing data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.20, random_state=42, stratify=y
+)
+
+# 3. Standardize the input features
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# 4. Create Feed Forward Neural Network
+model = MLPClassifier(
+    hidden_layer_sizes=(10,),
+    activation="relu",
+    solver="adam",
+    learning_rate_init=0.01,
+    max_iter=1000,
+    random_state=42,
+)
+
+# 5. Train the neural network
+model.fit(X_train, y_train)
+
+# 6. Predict test data
+y_pred = model.predict(X_test)
+
+# 7. Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nTest Accuracy:", round(accuracy, 4))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
