@@ -1,0 +1,67 @@
+Aim: To implement the Decision Tree Learning algorithm on a given dataset, build a decision tree for classification, evaluate its accuracy on test data, and visualize and interpret the generated decision tree.
+Code:
+
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+def main():
+    # 1. Load a structured dataset (Iris Flower Dataset)
+    print("--- 1. Loading Dataset ---")
+    data = load_iris()
+    X = data.data
+    y = data.target
+    feature_names = data.feature_names
+    target_names = data.target_names
+    print(f"Features: {feature_names}")
+    print(f"Target Classes: {target_names}")
+    print(f"Dataset Shape: {X.shape}\n")
+
+    # 2. Split dataset into training (70%) and testing (30%) sets
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42, stratify=y
+    )
+
+    # 3. Initialize and train the Decision Tree Classifier
+    # max_depth is set to 3 to optimize readability and prevent overfitting
+    print("--- 2. Training Decision Tree ---")
+    dt_classifier = DecisionTreeClassifier(
+        criterion="gini", max_depth=3, random_state=42
+    )
+    dt_classifier.fit(X_train, y_train)
+    print("Model training complete.\n")
+
+    # 4. Evaluate the model on test data
+    print("--- 3. Evaluating Model Performance ---")
+    y_pred = dt_classifier.predict(X_test)
+    # Calculate performance metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    class_report = classification_report(y_test, y_pred, target_names=target_names)
+    print(f"Test Accuracy: {accuracy:.4f}\n")
+    print("Confusion Matrix:")
+    print(conf_matrix)
+    print("\nClassification Report:")
+    print(class_report)
+
+    # 5. Visualize and interpret the generated decision tree
+    print("--- 4. Visualizing Decision Tree ---")
+    plt.figure(figsize=(12, 8), dpi=300)
+    plot_tree(
+        dt_classifier,
+        feature_names=feature_names,
+        class_names=target_names,
+        filled=True,
+        rounded=True,
+        fontsize=10,
+    )
+    plt.title("Generated Decision Tree Structure", fontsize=14, fontweight="bold")
+    # Save the visualization to a local file
+    output_filename = "decision_tree_visualization.png"
+    plt.savefig(output_filename, bbox_inches="tight")
+    plt.show()
+    print(f"Visualization graphic successfully saved as '{output_filename}'.")
+if __name__ == "__main__":
+    main()
