@@ -1,0 +1,58 @@
+Aim: Implement the Adaboost algorithm to create an ensemble of weak classifiers.
+
+Code:
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y
+)
+
+# Individual Weak Classifier
+weak_classifier = DecisionTreeClassifier(
+    max_depth=1, random_state=42
+)
+weak_classifier.fit(X_train, y_train)
+
+# Prediction using weak classifier
+weak_pred = weak_classifier.predict(X_test)
+
+# Accuracy
+weak_accuracy = accuracy_score(y_test, weak_pred)
+
+# AdaBoost Ensemble
+ada_model = AdaBoostClassifier(
+    estimator=DecisionTreeClassifier(max_depth=1),
+    n_estimators=50,
+    learning_rate=1.0,
+    random_state=42
+)
+
+# Train AdaBoost
+ada_model.fit(X_train, y_train)
+
+# Prediction using AdaBoost
+ada_pred = ada_model.predict(X_test)
+
+# Accuracy
+ada_accuracy = accuracy_score(y_test, ada_pred)
+
+# Display results
+print("Individual Weak Classifier Accuracy:",
+      round(weak_accuracy * 100, 2), "%")
+print("AdaBoost Ensemble Accuracy:",
+      round(ada_accuracy * 100, 2), "%")
+
+print("\nPerformance Comparison")
+print("----------------------")
+print("Weak Classifier :", round(weak_accuracy * 100, 2), "%")
+print("AdaBoost        :", round(ada_accuracy * 100, 2), "%")
