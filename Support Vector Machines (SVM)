@@ -1,0 +1,79 @@
+Aim: To implement a Support Vector Machine (SVM) classifier with feature scaling and grid search cross-validation on a given dataset, optimize its hyperparameters using GridSearchCV, and evaluate the model's classification performance on unseen test data.
+Code:
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Step 1: Load the dataset
+data = load_breast_cancer()
+
+X = data.data
+y = data.target
+
+print("Dataset Shape:", X.shape)
+print("Classes:", data.target_names)
+
+# Step 2: Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+print("\nTraining Samples:", len(X_train))
+print("Testing Samples:", len(X_test))
+
+# Step 3: Create SVM pipeline
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("svm", SVC())
+])
+
+# Step 4: Define parameters for optimization
+parameters = {
+    "svm__C": [0.1, 1, 10, 100],
+    "svm__gamma": ["scale", "auto"],
+    "svm__kernel": ["linear", "rbf"]
+}
+
+# Step 5: Optimize parameters using GridSearchCV
+grid_search = GridSearchCV(
+    pipeline,
+    parameters,
+    cv=5,
+    scoring="accuracy"
+)
+
+grid_search.fit(X_train, y_train)
+
+# Step 6: Display best parameters
+print("\nBest Parameters:")
+print(grid_search.best_params_)
+
+print("\nBest Cross-Validation Accuracy:",
+      round(grid_search.best_score_, 4))
+
+# Step 7: Predict test data
+y_pred = grid_search.predict(X_test)
+
+# Step 8: Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nTest Accuracy:", round(accuracy, 4))
+
+# Step 9: Confusion Matrix
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Step 10: Classification Report
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    y_pred,
+    target_names=data.target_names
+))
